@@ -25,6 +25,7 @@
         line-height: 1.6;
         color: var(--text);
         background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        scroll-behavior: smooth;
       }
 
       .container {
@@ -47,12 +48,12 @@
       }
 
       @media (min-width: 760px) {
-        .hero { grid-template-columns: 180px 1fr; align-items: center; }
+        .hero { grid-template-columns: 220px 1fr; align-items: center; }
       }
 
       .profile-photo {
-        width: 160px;
-        height: 160px;
+        width: 200px;
+        height: 200px;
         object-fit: cover;
         border-radius: 50%;
         border: 4px solid #dbeafe;
@@ -73,7 +74,7 @@
       }
 
       h1, h2, h3 { margin: 0 0 0.6rem; line-height: 1.25; }
-      h1 { font-size: clamp(1.9rem, 5vw, 2.5rem); }
+      h1 { font-size: clamp(2rem, 4.8vw, 2.55rem); }
       h2 { font-size: 1.28rem; }
       p, li { color: var(--muted); }
 
@@ -85,8 +86,28 @@
       .icon-links {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.65rem;
-        margin-top: 0.9rem;
+        gap: 1rem;
+        margin-top: 1.25rem;
+        margin-left: 0.35rem;
+      }
+      .hero-note {
+        margin: 0.2rem 0 0.3rem;
+      }
+      .hero-message-btn {
+        display: inline-block;
+        text-decoration: none;
+        background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+        color: #fff;
+        border-radius: 999px;
+        padding: 0.26rem 0.56rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.01em;
+        font-weight: 600;
+        box-shadow: 0 6px 14px rgba(14, 165, 233, 0.25);
+      }
+      .hero-message-btn:hover {
+        filter: brightness(1.03);
+        transform: translateY(-1px);
       }
 
       .icon-link {
@@ -136,6 +157,83 @@
         padding: 3px;
         background: #fff;
       }
+      .message-form {
+        display: grid;
+        gap: 0.7rem;
+        margin-top: 0.6rem;
+      }
+      .contact-card {
+        background:
+          radial-gradient(circle at top right, #dbeafe 0%, #ffffff 45%),
+          var(--surface);
+      }
+      .message-form input,
+      .message-form textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 0.65rem 0.75rem;
+        font: inherit;
+        color: var(--text);
+        background: #fff;
+      }
+      .message-form textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+      .message-form button {
+        width: fit-content;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #fff;
+        border-radius: 10px;
+        padding: 0.6rem 0.9rem;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .message-form button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+      }
+      .sent-banner {
+        margin: 0 0 0.7rem;
+        border: 1px solid #86efac;
+        background: #f0fdf4;
+        color: #166534;
+        border-radius: 10px;
+        padding: 0.6rem 0.75rem;
+        font-weight: 600;
+      }
+      .name-choice {
+        display: inline-flex;
+        gap: 0.4rem;
+        padding: 0.25rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        width: fit-content;
+        background: #fff;
+      }
+      .name-choice input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .name-choice .choice-pill {
+        border-radius: 999px;
+        padding: 0.38rem 0.75rem;
+        color: var(--muted);
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+      }
+      .name-choice input:checked + .choice-pill {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      .hidden {
+        display: none;
+      }
       footer { text-align: center; font-size: 0.9rem; color: #64748b; margin-top: 1.7rem; }
     </style>
   </head>
@@ -147,8 +245,10 @@
           <p class="photo-caption">Applied Scientist @ Amazon</p>
         </div>
         <div>
-          <p class="eyebrow">Profile</p>
           <h1>Shengnan Liang</h1>
+          <p>Welcome to my personal website.</p>
+          <p class="hero-note">Say hi anytime - send a private note anonymously or sign your name.</p>
+          <a class="hero-message-btn" href="#private-message-form">Send Me a Note</a>
           <div class="icon-links">
             <a class="icon-link" href="https://www.linkedin.com/in/shengnan-liang/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.48 2.48 0 1 0 0 4.96 2.48 2.48 0 0 0 0-4.96zM3 9h4v12H3zm7 0h3.83v1.64h.05c.53-1 1.84-2.05 3.79-2.05C21.26 8.59 22 10.87 22 14.04V21h-4v-6.17c0-1.47-.03-3.36-2.05-3.36-2.05 0-2.36 1.6-2.36 3.25V21h-4z"/></svg>
@@ -197,7 +297,81 @@
         </ul>
       </section>
 
+      <section class="card contact-card" id="contact">
+        <p class="muted-label">Contact</p>
+        <h2>Leave Me a Private Message</h2>
+        <p>Your message is sent directly to my inbox. No email required.</p>
+        <form class="message-form" id="private-message-form" action="https://formsubmit.co/liangsn2001@outlook.com" method="POST">
+          <input type="hidden" name="_subject" value="Private message from personal website" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" id="form-next" name="_next" value="" />
+          <input type="hidden" id="sender-display-name" name="sender" value="Anonymous" />
+          <div class="name-choice">
+            <label>
+              <input type="radio" name="name-mode" value="anonymous" checked />
+              <span class="choice-pill">Anonymous</span>
+            </label>
+            <label>
+              <input type="radio" name="name-mode" value="named" />
+              <span class="choice-pill">With Name</span>
+            </label>
+          </div>
+          <div id="name-row" class="hidden">
+            <input id="sender-name" type="text" placeholder="Your name" />
+          </div>
+          <textarea id="sender-message" name="message" placeholder="Drop your message here..." required></textarea>
+          <button type="submit">Send Private Message</button>
+        </form>
+      </section>
+
       <footer>Shengnan Liang</footer>
     </main>
+    <script>
+      const form = document.getElementById("private-message-form");
+      const nameInput = document.getElementById("sender-name");
+      const nameModeInputs = document.querySelectorAll('input[name="name-mode"]');
+      const senderDisplayName = document.getElementById("sender-display-name");
+      const nextField = document.getElementById("form-next");
+
+      const syncNameInput = () => {
+        const mode = document.querySelector('input[name="name-mode"]:checked').value;
+        const nameRow = document.getElementById("name-row");
+        const isAnonymous = mode === "anonymous";
+        nameRow.classList.toggle("hidden", isAnonymous);
+        if (isAnonymous) {
+          nameInput.value = "";
+          senderDisplayName.value = "Anonymous";
+        } else {
+          senderDisplayName.value = nameInput.value.trim() || "Name not provided";
+        }
+      };
+
+      nameModeInputs.forEach((input) => {
+        input.addEventListener("change", syncNameInput);
+      });
+      nameInput.addEventListener("input", syncNameInput);
+      syncNameInput();
+
+      const currentUrl = new URL(window.location.href);
+      const successUrl = new URL(window.location.href);
+      successUrl.searchParams.set("sent", "1");
+      nextField.value = successUrl.toString();
+
+      if (currentUrl.searchParams.get("sent") === "1") {
+        const banner = document.createElement("p");
+        banner.className = "sent-banner";
+        banner.textContent = "Message sent. Thanks for reaching out.";
+        form.prepend(banner);
+        currentUrl.searchParams.delete("sent");
+        window.history.replaceState({}, "", currentUrl.pathname + currentUrl.search);
+      }
+
+      form.addEventListener("submit", () => {
+        const mode = document.querySelector('input[name="name-mode"]:checked').value;
+        senderDisplayName.value = mode === "anonymous"
+          ? "Anonymous"
+          : (nameInput.value.trim() || "Name not provided");
+      });
+    </script>
   </body>
 </html>
