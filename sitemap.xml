@@ -3,4 +3,5 @@
   <url><loc>https://liang-sn.github.io/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://liang-sn.github.io/blog/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://liang-sn.github.io/blog/inference-stack/</loc><lastmod>2026-10-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://liang-sn.github.io/blog/llm-stack/</loc><lastmod>2026-10-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
