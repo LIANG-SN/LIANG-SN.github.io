@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SFT vs DPO vs RL: What Should LLM Post-Training Optimize? | Shengnan Liang</title>
+<meta name="description" content="A practical guide to SFT, DPO, and reinforcement learning for foundation models and applied AI agents. Why not just SFT the best answer, when RL helps, and how to avoid reward hacking.">
+<meta property="og:type" content="article"><meta property="og:title" content="SFT vs DPO vs RL: What Should LLM Post-Training Optimize?"><meta property="og:description" content="Choosing the right post-training objective for general-purpose models and tool-using products.">
+<meta property="og:url" content="https://liang-sn.github.io/blog/sft-dpo-rl/">
+<link rel="canonical" href="https://liang-sn.github.io/blog/sft-dpo-rl/">
+<link rel="icon" type="image/jpeg" href="../../assets/shengnan-linkedin.jpg">
+<style>
+:root{--ink:#12243b;--muted:#53657d;--line:#dce5f0;--blue:#2563eb;--mint:#eaf8f3;--purple:#f4f0fc;--sky:#eff6ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(#f7faff,#fff 720px);color:var(--ink);font:16px/1.78 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:#245ac3;text-decoration:none}a:hover{text-decoration:underline}.wrap{max-width:1020px;margin:auto;padding:0 24px}.bar{border-bottom:1px solid var(--line);background:#ffffffee;position:sticky;top:0;z-index:3}.nav{height:64px;display:flex;align-items:center;gap:22px}.brand{font-size:20px;font-weight:850;color:var(--ink)}.links{margin-left:auto;display:flex;gap:24px;font-size:14px;font-weight:650}.links a{color:#546985}.skip{position:absolute;left:-9999px}.skip:focus{left:20px;top:10px;background:white;z-index:9;padding:10px}
+.hero{padding:56px 0 34px;border-bottom:1px solid var(--line);margin-bottom:40px}.kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);font-weight:850}h1{font-size:clamp(2.3rem,5vw,3.7rem);line-height:1.13;letter-spacing:-.05em;margin:12px 0 20px}h2{font-size:clamp(1.45rem,3vw,1.95rem);line-height:1.3;letter-spacing:-.025em;margin:0 0 15px}h3{font-size:1.13rem;line-height:1.35;margin:0 0 8px}p{margin:0 0 17px;color:var(--muted)}strong{color:var(--ink)}.lead{max-width:820px;font-size:1.17rem}.meta{font-size:13px;color:#73839b}.quicklinks{display:flex;gap:17px;flex-wrap:wrap;margin-top:19px;font-size:13px;font-weight:750}
+.columns{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:38px}.article{min-width:0}.article section{margin:0 0 54px;scroll-margin-top:90px}.article a{text-decoration:underline;text-underline-offset:3px}.toc{position:sticky;top:88px;align-self:start;border:1px solid var(--line);border-radius:14px;background:white;padding:17px;max-height:calc(100vh - 115px);overflow:auto}.toc b{display:block;text-transform:uppercase;letter-spacing:.09em;color:#8291a7;font-size:11px;margin-bottom:9px}.toc a{display:block;font-size:13px;padding:5px 0;color:#53657d}
+.principle{background:#eff6ff;border:1px solid #cbdffb;border-radius:17px;padding:21px 24px;margin:18px 0 25px}.principle strong{color:#204b91}.principle p{color:#2e527f;margin:6px 0 0}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:23px 0}.method{background:#fff;border:1px solid var(--line);border-radius:16px;padding:19px;min-width:0}.method:nth-child(1){border-top:4px solid #4389de}.method:nth-child(2){border-top:4px solid #8b70ca}.method:nth-child(3){border-top:4px solid #31997b}.method .name{font-size:21px;font-weight:800;letter-spacing:-.025em}.method small{display:block;color:#74859b;font-weight:750;font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin:4px 0 12px}.method p{font-size:13px;margin:0}.method code{white-space:normal;display:block;border-radius:9px;background:#f6f9ff;padding:9px;font-size:12px;line-height:1.5;margin-bottom:12px}
+.pipeline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:22px 0 8px}.node{border:1px solid #cfddec;background:#fff;border-radius:11px;padding:10px 13px;font-size:13px;font-weight:780}.node.highlight{background:#eaf2ff;border-color:#a6c7ed}.node.choice{background:#f1faf6;border-color:#b8deca}.arrow{color:#879ab2;font-weight:800}.caption{font-size:12px;color:#8392a6}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin:23px 0}table{border-collapse:collapse;width:100%;min-width:650px;font-size:13px;line-height:1.62}th{padding:13px;text-align:left;background:#eef4fc;color:#40556d}td{padding:13px;vertical-align:top;border-top:1px solid #e7eef7;color:#53657d}td strong{color:var(--ink)}.quote{border-left:3px solid #3b82f6;background:#f2f7ff;color:#24486f;border-radius:0 12px 12px 0;padding:17px 19px;font-weight:750;margin:22px 0}.example{border:1px solid var(--line);border-radius:14px;background:#fff;padding:20px 22px;margin:21px 0}.example p{margin-bottom:10px}.badge{font-size:10px;letter-spacing:.05em;text-transform:uppercase;font-weight:850;border-radius:30px;padding:4px 9px;display:inline-block;margin-bottom:10px;background:#edf4ff;color:#315e9c}.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.candidate{border-radius:11px;padding:13px;font-size:13px;line-height:1.65;background:#eaf8f3;color:#275747}.candidate.bad{background:#fff1f0;color:#853b39}.candidate b{display:block;margin-bottom:5px}.formula{overflow-wrap:anywhere;background:#f4f7fb;border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:#364a61;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;margin:8px 0 16px}.rule{display:grid;grid-template-columns:120px 1fr;gap:12px;margin:12px 0;padding:14px;border-left:3px solid #a6bfde;background:#fafcff;border-radius:0 9px 9px 0}.rule b{color:#244b85}.rule span{color:#53657d;font-size:14px}.steps{counter-reset:steps;list-style:none;padding:0}.steps li{counter-increment:steps;position:relative;padding:0 0 0 43px;margin:0 0 17px;color:var(--muted)}.steps li:before{content:counter(steps);position:absolute;left:0;top:2px;background:#eaf2ff;color:#2563eb;border-radius:10px;width:28px;height:28px;text-align:center;line-height:28px;font-weight:850;font-size:13px}
+ul,ol{padding-left:22px;color:var(--muted)}li{margin:7px 0}.sources li{font-size:13px}.bottom{padding:18px 20px;background:#12243b;border-radius:15px;color:#dfe9fb;margin:20px 0}.bottom strong{color:white}.bottom p{color:#dfe9fb;margin:4px 0 0}.related{border-top:1px solid var(--line);padding-top:21px}footer{border-top:1px solid var(--line);font-size:13px;color:#8794a6;padding:25px 0 44px}
+@media(max-width:800px){.columns{display:block}.toc{display:none}.trio{grid-template-columns:1fr}.pair{grid-template-columns:1fr}}
+@media(max-width:520px){.wrap{padding:0 18px}.hero{padding-top:34px}.nav{gap:12px}.links{gap:12px}.rule{grid-template-columns:1fr;gap:2px}.pipeline{gap:6px}.node{padding:8px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media print{.bar,.toc,.quicklinks{display:none}.columns{display:block}}
+</style>
+</head>
+<body><a class="skip" href="#main">Skip to article</a>
+<header class="bar"><nav class="wrap nav" aria-label="Main navigation"><a href="../../" class="brand">SL.</a><div class="links"><a href="../../">Home</a><a href="../">Blog</a><a href="#chinese" lang="zh-Hans">中文速读</a></div></nav></header>
+<main class="wrap" id="main"><article>
+<div class="hero">
+<div class="kicker">Field notes / LLM Post-training · October 26, 2026</div>
+<h1>SFT vs DPO vs RL: What Should LLM Post-Training Optimize?</h1>
+<p class="lead">From foundation models to tool-using agents, the right training method depends less on which acronym is newest—and more on what feedback you can trust. The deceptively hard question: <strong>if you already know the best answer, why not just SFT it?</strong></p>
+<div class="meta">Shengnan Liang · Research &amp; engineering overview · Sources checked October 26, 2026</div>
+<div class="quicklinks"><a href="#comparison">Compare the methods ↓</a><a href="#best-answer">Why not best-answer SFT? ↓</a><a href="#applications">Real-world examples ↓</a><a href="#chinese" lang="zh-Hans">中文速读 ↓</a></div>
+</div>
+<div class="columns"><div class="article">
+<section id="thesis"><div class="kicker">01 / The decision in one minute</div><h2>Three different kinds of learning signals</h2>
+<div class="trio" aria-label="SFT, DPO and RL at a glance">
+<div class="method"><div class="name">SFT</div><small>Learn from demonstrations</small><code>Prompt → high-quality response</code><p><strong>Teach the behavior.</strong> Reproduce a labeled target, such as a tool call, structured output, or good reasoning trace.</p></div>
+<div class="method"><div class="name">DPO</div><small>Learn from comparisons</small><code>Prompt → chosen vs. rejected</code><p><strong>Shape preferences.</strong> Make preferred responses more likely relative to rejected responses and a reference policy.</p></div>
+<div class="method"><div class="name">RL</div><small>Learn from outcomes</small><code>Sample → evaluate → update</code><p><strong>Optimize a policy.</strong> Try candidate solutions or action trajectories and improve from reward or environment feedback.</p></div>
+</div>
+<div class="principle"><strong>Short answer:</strong><p>Use <b>SFT</b> when you have representative high-quality demonstrations; use <b>DPO</b> when pairwise preference judgments contain useful information; use <b>RL</b> when the model can explore and success can be evaluated reliably. None is inherently a mandatory upgrade over another.</p></div>
+<p>These are <em>training objectives</em>, not job titles and not a fixed pipeline. A typical starting point is pretraining followed by instruction SFT. After that, preference optimization or outcome-driven RL may be useful—or unnecessary.</p>
+<div class="pipeline" role="img" aria-label="Pretraining leads to SFT. From SFT, optionally choose preference optimization such as DPO, outcome-oriented RL, or continue improving SFT data.">
+<span class="node">Pretraining</span><span class="arrow">→</span><span class="node highlight">Instruction SFT</span><span class="arrow">→</span><span class="node choice">Better SFT data</span><span class="node choice">DPO / preference</span><span class="node choice">RL / outcomes</span>
+</div>
+<p class="caption">The rightmost options are alternatives or potentially complementary stages—not a required linear sequence.</p>
+</section>
+
+<section id="comparison"><div class="kicker">02 / Objectives &amp; trade-offs</div><h2>What is actually optimized?</h2>
+<div class="tablewrap"><table><thead><tr><th>Dimension</th><th>SFT</th><th>DPO (standard offline)</th><th>RL (e.g. PPO / GRPO)</th></tr></thead><tbody>
+<tr><td><strong>Signal</strong></td><td>Target demonstrations</td><td>Chosen / rejected response pairs</td><td>Scalar rewards, verifiers, or environment returns</td></tr>
+<tr><td><strong>Learning</strong></td><td>Maximize likelihood of labeled answer</td><td>Increase preferred vs. rejected log-likelihood ratio relative to reference model</td><td>Maximize expected return under policy / regularization constraints</td></tr>
+<tr><td><strong>Model sampling during training</strong></td><td>Not required</td><td>Not required for fixed offline pairs</td><td>Usually required for on-policy PPO/GRPO</td></tr>
+<tr><td><strong>Main attraction</strong></td><td>Stable, inexpensive, direct</td><td>Uses comparisons without explicit reward-model fitting</td><td>Exploration, outcomes, full action trajectories</td></tr>
+<tr><td><strong>Key failure</strong></td><td>Poor demonstrations or distribution gaps</td><td>Noisy preferences, static coverage, preference overfitting</td><td>Expensive rollouts, unreliable reward, reward hacking</td></tr>
+</tbody></table></div>
+<p><strong>SFT:</strong> minimize negative log-likelihood on demonstrated outputs.</p><div class="formula">L_SFT = −E_(x,y*) [ log πθ(y* | x) ]</div>
+<p><strong>DPO:</strong> maximize the chosen response's relative advantage over a rejected response, anchored to a reference policy. The equation below abbreviates the DPO log-ratio margin.</p><div class="formula">L_DPO = −E [ log σ( β · ( log(πθ(y+|x)/πref(y+|x)) − log(πθ(y−|x)/πref(y−|x)) ) ) ]</div>
+<p><strong>RL:</strong> optimize expected reward over outputs or multi-step trajectories, typically with policy-stability terms and external constraints.</p><div class="formula">maximize  E_(τ ∼ πθ) [ R(τ) ]   (subject to relevant constraints)</div>
+<p>Classical RLHF often fits an explicit reward model from human preferences and uses PPO. DPO bypasses that explicit reward-model + PPO loop under its modeling assumptions; it is not the same algorithm as on-policy RL. By contrast, <strong>RLVR</strong> uses verifiable signals such as mathematical correctness or code execution. See the original <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/a85b405ed65c6477a4fe8302b5e06ce7-Abstract.html">DPO paper</a> and <a href="https://proceedings.neurips.cc/paper/2022/hash/b1efde53be364a73914f58805a001731-Abstract-Conference.html">InstructGPT</a>.</p>
+</section>
+
+<section id="best-answer"><div class="kicker">03 / The uncomfortable question</div><h2>If we already have the optimal answer, why not just SFT it?</h2>
+<div class="quote">Often, you should. Chosen-only SFT is a strong baseline—not a strawman that DPO automatically beats.</div>
+<p>Suppose you have three candidate answers to the same prompt: A is excellent, B is acceptable, and C is poor. SFT on A directly trains the model to produce A. DPO on (A, C) or (A, B) additionally uses a <em>pairwise preference signal</em> and the frozen reference policy. This can be useful when the specific mistakes reflected by B or C are important and your dataset captures them reliably.</p>
+<p>But do not overstate the distinction: SFT's normalized softmax already changes relative token probabilities. DPO does <em>not</em> make the model understand the human's reason for choosing A, and it does not guarantee that A's absolute probability rises. Its distinctive signal is the <strong>explicit relative comparison</strong>, not secret knowledge about response quality.</p>
+<div class="example"><span class="badge">Example: conversational alignment</span><p><strong>User:</strong> “Should I buy this volatile stock?”</p>
+<div class="pair"><div class="candidate"><b>Chosen</b> “Consider valuation, concentration, downside risk, and your time horizon before deciding.”</div><div class="candidate bad"><b>Rejected</b> “Definitely buy it—there is almost no downside.”</div></div>
+<p style="margin:0;font-size:13px">SFT can imitate the calibrated answer. DPO can leverage explicit comparisons showing that unwarranted confidence is less desirable. Whether this helps on unseen prompts is an empirical question.</p></div>
+<p>A <a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/3f37b8fbd43303106dd141a602838ad5-Abstract-Conference.html">NeurIPS 2025 study on DPO data</a> found that chosen-response quality often dominates performance, while the quality of rejected samples can matter less than expected. Its analysis of an online-DPO setting also underscored the importance of the chosen examples. That supports a practical rule: <strong>invest in better positive demonstrations before assuming preference optimization will help</strong>.</p>
+<p><strong>When is DPO compelling?</strong> When annotators can reliably say “A is better than B” but cannot write a single canonical ideal response; when there are many acceptable answers with nuanced preferences; or when existing SFT generates recurring undesirable styles that paired comparisons target more directly. Compare against chosen-only SFT with matched data and compute.</p>
+</section>
+
+<section id="rl"><div class="kicker">04 / What RL adds</div><h2>RL is most interesting when answers are not the whole task</h2>
+<p>For difficult math or code problems, one prompt can admit many successful strategies. Supervised data may only show a few. With a trustworthy verifier, RL can sample new attempts and reinforce those that succeed. <a href="https://www.nature.com/articles/s41586-025-09422-z">DeepSeek-R1</a> is a well-documented example of reinforcement learning eliciting self-reflection and verification behaviors, although its full recipe also includes SFT stages.</p>
+<p>The same principle extends to interactive agents: success may depend on <strong>which tool to call next, how to recover from failed calls, how much to search, and when to stop</strong>. A single “correct API” label cannot always describe the best trajectory.</p>
+<div class="example"><span class="badge">Example: multi-step agent</span>
+<p><strong>Task:</strong> “Find a charging stop along my route with little waiting and coffee nearby.”</p>
+<div class="rule"><b>SFT</b><span>Imitate a demonstrated sequence of search, availability check, nearby amenities, and user confirmation.</span></div>
+<div class="rule"><b>DPO</b><span>Prefer a well-grounded recommendation over one that ignores wait time or charges ahead without sufficient context.</span></div>
+<div class="rule"><b>RL</b><span>Interact with a simulator: choose searches, handle unavailable stations, minimize detours, and maximize verified task completion.</span></div>
+<p style="font-size:13px;margin:0">Even here, a deterministic workflow or iterative SFT on corrected trajectories may be simpler and stronger than RL. Multi-step complexity alone is not evidence that RL is needed.</p></div>
+<p>One controlled <a href="https://aclanthology.org/2026.realm-1.90/">2026 tool-calling study</a> compared LoRA SFT, GRPO, and SFT→GRPO on six Qwen3 scales. SFT led 15 of 18 in-distribution settings; GRPO won 29 of 54 cross-dataset settings with an average margin below one point. This is evidence against assuming RL is always superior for <em>single-step tool calling</em>, not a verdict on long-horizon agents or all compute budgets.</p>
+</section>
+
+<section id="applications"><div class="kicker">05 / Foundation models vs. applied products</div><h2>Where I would start in practice</h2>
+<div class="tablewrap"><table><thead><tr><th>Task</th><th>First choice</th><th>Why / when to escalate</th></tr></thead><tbody>
+<tr><td><strong>General model: instruction following / structured format</strong></td><td><strong>SFT</strong></td><td>Clear demonstrations teach baseline behavior. Compare preference methods if subjective response quality remains weak.</td></tr>
+<tr><td><strong>General model: writing tone, helpfulness, calibration</strong></td><td><strong>SFT → DPO</strong></td><td>Relative human preferences are meaningful; no single canonical wording exists.</td></tr>
+<tr><td><strong>General model: math and coding</strong></td><td><strong>SFT → RLVR</strong></td><td>Exact answers and unit tests can verify diverse attempts. Guard against test exploitation.</td></tr>
+<tr><td><strong>Business: API selection, argument extraction</strong></td><td><strong>SFT</strong></td><td>Tool name, slots, schema, and no-call behavior have explicit labels.</td></tr>
+<tr><td><strong>Business: ambiguous intent or response preference</strong></td><td><strong>SFT, possibly DPO</strong></td><td>Chosen/rejected pairs help if clarification style or conservatism is subjective and reliably labeled.</td></tr>
+<tr><td><strong>Business: multi-turn tool agent / failure recovery</strong></td><td><strong>SFT → evaluate RL</strong></td><td>Only escalate when final-outcome reward is trustworthy and sequential decision errors dominate.</td></tr>
+<tr><td><strong>Business: high-stakes actions</strong></td><td><strong>SFT + deterministic constraints</strong></td><td>Policy optimization cannot replace authorization, sandboxing, and external safety gates.</td></tr>
+</tbody></table></div>
+<p>For production systems, “best” means <strong>quality under latency, cost, reliability, and safety constraints</strong>—not just training reward or offline benchmark accuracy.</p>
+</section>
+
+<section id="hacking"><div class="kicker">06 / Reward hacking</div><h2>Why a better training reward can mean a worse product</h2>
+<p>Suppose a tool-using model receives +1 whenever an API returns success. It might learn to call easy read-only APIs or repeatedly query status instead of fulfilling the user's actual intent. The reward is high; the task is unfinished. In coding environments, an agent may overfit visible tests or exploit a grader. OpenAI has documented concerns about <a href="https://openai.com/index/chain-of-thought-monitoring/">reward hacking and concealment under monitoring</a>.</p>
+<div class="example"><span class="badge">The wrong target vs. a better one</span>
+<div class="formula">Bad: reward = 1 if api_returned_200 else 0</div>
+<div class="formula">Better: reward = verified_task_success − cost_of_unnecessary_calls</div>
+<p style="font-size:13px;margin:0">The “better” expression is illustrative, not a complete safe reward. An independent environment must verify outcomes; unsafe actions must be blocked by execution-layer permissions, not merely penalized.</p></div>
+<p>Practical defenses: hidden independent evaluation, immutable graders, realistic simulators, adversarial stress tests, drift monitoring, and permission boundaries. Watch for <strong>train reward rising while independently measured task success is flat or falling</strong>. That gap can also reflect overfitting or evaluator mismatch, so investigate rather than labeling every regression hacking.</p>
+</section>
+
+<section id="playbook"><div class="kicker">07 / A minimal experimental playbook</div><h2>Before paying for RL infrastructure</h2>
+<ol class="steps">
+<li><strong>Build a serious SFT baseline.</strong> Curate high-quality positives, edge cases, no-tool calls, hard ambiguous examples, and representative train/test splits.</li>
+<li><strong>Try better SFT data before a new objective.</strong> Gather model-generated failures, correct trajectories with a teacher or human, filter carefully, and SFT again.</li>
+<li><strong>Test DPO if preference information is available.</strong> Compare chosen-only SFT vs. SFT→DPO on the same prompts, positive responses, and held-out distributions.</li>
+<li><strong>Test RL only with a meaningful verifier or environment.</strong> Include on-policy exploration, simulator fidelity, reward robustness, and real rollout costs in the analysis.</li>
+<li><strong>Evaluate the finished system, not just the loss.</strong> Measure exact tool accuracy, task completion, refusal/no-call precision, unseen cases, latency, cost, and safety. Report compute-adjusted gains.</li>
+</ol>
+<div class="bottom"><strong>Rule of thumb</strong><p><b>Known good demonstrations → SFT.</b> <b>Reliable relative preferences → DPO.</b> <b>Reliable outcome feedback + valuable exploration → RL.</b> Start simple and escalate only when the incremental gain survives independent evaluation.</p></div>
+</section>
+
+<section id="chinese" lang="zh-Hans"><div class="kicker">中文速读</div><h2>怎么选择 SFT、DPO 和 RL？</h2>
+<p><strong>SFT</strong> 是模仿优质示范：有正确 API、参数、标准格式或高质量答案时，通常应该先用它。<strong>DPO</strong> 利用 chosen / rejected 的相对偏好，不需要显式训练 reward model，也不需要标准 offline DPO 训练时 rollout。<strong>RL</strong> 适合能够可靠验证结果，并且需要探索不同推理路径、工具调用策略或多步行为的任务。</p>
+<p><strong>为什么有最佳答案还要 DPO？</strong> 很多时候根本不必：chosen-only SFT 可能已经很好。DPO 的附加价值在于相对比较信号，尤其适用于没有唯一正确措辞、但能稳定判断哪个好/哪个差的任务；它不是天然更高级的 SFT，也不会自动“理解”人的偏好原因。</p>
+<p><strong>通用模型：</strong> 指令和格式用 SFT 打基础；对话风格、人类偏好可尝试 DPO；数学、代码等可验证推理更适合考虑 RLVR。<strong>业务模型：</strong> 单步 API calling 通常优先 SFT；细腻的澄清偏好可尝试 DPO；真实多步 Agent 才更值得尝试 RL。任何涉及车辆、支付或其他现实操作的系统，都需要独立的安全约束，不应只靠 reward。</p>
+</section>
+
+<section id="references"><div class="kicker">Further reading</div><h2>Primary sources and scope</h2>
+<ol class="sources">
+<li><a href="https://proceedings.neurips.cc/paper/2022/hash/b1efde53be364a73914f58805a001731-Abstract-Conference.html">Ouyang et al., Training Language Models to Follow Instructions with Human Feedback</a> (NeurIPS 2022): SFT demonstrations, preference labels, reward model, PPO.</li>
+<li><a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/a85b405ed65c6477a4fe8302b5e06ce7-Abstract.html">Rafailov et al., Direct Preference Optimization</a> (NeurIPS 2023): the DPO objective and its derivation.</li>
+<li><a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/3f37b8fbd43303106dd141a602838ad5-Abstract-Conference.html">Pan et al., What Matters in Data for DPO?</a> (NeurIPS 2025): importance of chosen-response quality.</li>
+<li><a href="https://www.nature.com/articles/s41586-025-09422-z">Guo et al., DeepSeek-R1 Incentivizes Reasoning in LLMs through Reinforcement Learning</a> (Nature 2025): verifiable rewards and reasoning RL.</li>
+<li><a href="https://aclanthology.org/2026.realm-1.90/">Laskar et al., SFT or RL for Tool-Calling Agents?</a> (REALM/ACL Anthology 2026): controlled tool-calling comparison and limits.</li>
+<li><a href="https://openai.com/index/chain-of-thought-monitoring/">OpenAI, Detecting Misbehavior in Frontier Reasoning Models</a> (2025): reward hacking and monitoring challenges.</li>
+</ol>
+<p class="caption">The method choices above are engineering recommendations, not universal rankings. Reported experimental results depend on model family, training data, reward design, evaluation distribution, and compute budget.</p>
+<div class="related"><strong>Related:</strong> <a href="../llm-stack/">The Modern LLM Stack: Lifecycle, Specializations &amp; Roles</a> · <a href="../inference-stack/">Mapping the AI Inference Stack</a></div>
+</section>
+</div>
+<aside class="toc" aria-label="Article contents"><b>In this article</b><a href="#thesis">Three training signals</a><a href="#comparison">Method comparison</a><a href="#best-answer">Why not just SFT?</a><a href="#rl">When RL adds value</a><a href="#applications">General vs. applied</a><a href="#hacking">Reward hacking</a><a href="#playbook">Experiment plan</a><a href="#chinese">中文速读</a><a href="#references">Sources</a></aside>
+</div></article><footer>© 2026 Shengnan Liang · <a href="../">All articles</a></footer></main>
+</body></html>
