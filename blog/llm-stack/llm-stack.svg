@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1310" role="img" aria-labelledby="title desc">
-  <title id="title">The LLM lifecycle: work, outputs, and role families</title>
-  <desc id="desc">Seven stages from data to production feedback. Each stage lists the work, output, and common owners without forcing a research and engineering split. Three role families span multiple stages.</desc>
+  <title id="title">The LLM and multimodal stack: lifecycle, specializations, and ownership</title>
+  <desc id="desc">Seven lifecycle stages from data to production feedback, with common outputs and owners. Cross-cutting dimensions include modalities, capabilities, trust, domains, and systems constraints.</desc>
   <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#7898bc"/></marker></defs>
   <rect width="1200" height="1310" rx="24" fill="#f8fafc"/>
   <g font-family="Inter,Arial,sans-serif">
@@ -51,11 +51,12 @@
       <text x="750" y="247" font-size="15" font-weight="700" fill="#12243b">Evidence &amp; improvement backlog</text><text x="750" y="274" font-size="14" fill="#53657d">Observability/SRE · evaluation · applied ML</text>
     </g>
     <path d="M1157 950H1175V254H1158" fill="none" stroke="#7898bc" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arrow)"/><text x="1148" y="597" font-size="12" fill="#53657d" transform="rotate(-90 1148 597)">PRODUCTION FEEDBACK</text>
-    <text x="48" y="1056" font-size="13" font-weight="700" letter-spacing="1.5" fill="#2563eb">ROLE FAMILIES SPAN STAGES</text>
-    <rect x="48" y="1075" width="350" height="137" rx="14" fill="#eef5ff"/><text x="68" y="1106" font-size="17" font-weight="700" fill="#12243b">Model &amp; learning</text><text x="68" y="1134" font-size="14" fill="#53657d">Model research · research engineering</text><text x="68" y="1158" font-size="14" fill="#53657d">Post-training/RL · data &amp; feedback</text><text x="68" y="1182" font-size="14" fill="#53657d">Multimodal · interpretability</text>
-    <rect x="425" y="1075" width="350" height="137" rx="14" fill="#edf9f5"/><text x="445" y="1106" font-size="17" font-weight="700" fill="#12243b">Measurement &amp; product</text><text x="445" y="1134" font-size="14" fill="#53657d">Evaluation · safety · AI security</text><text x="445" y="1158" font-size="14" fill="#53657d">Applied ML · retrieval · agents</text><text x="445" y="1182" font-size="14" fill="#53657d">Domain and product engineering</text>
-    <rect x="802" y="1075" width="350" height="137" rx="14" fill="#f5f1fc"/><text x="822" y="1106" font-size="17" font-weight="700" fill="#12243b">Systems &amp; runtime</text><text x="822" y="1134" font-size="14" fill="#53657d">Training · RL infrastructure</text><text x="822" y="1158" font-size="14" fill="#53657d">Inference/performance · optimization</text><text x="822" y="1182" font-size="14" fill="#53657d">Platform/SRE · edge/device ML</text>
-    <rect x="48" y="1233" width="1104" height="45" rx="11" fill="#12243b"/><text x="66" y="1261" font-size="15" fill="#e8f0fa">Evaluation, safety, reproducibility, and model–system co-design cut across the lifecycle.</text>
+    <text x="48" y="1056" font-size="13" font-weight="700" letter-spacing="1.5" fill="#2563eb">CROSS-CUTTING DIMENSIONS</text>
+    <rect x="48" y="1075" width="540" height="62" rx="12" fill="#eef5ff"/><text x="66" y="1102" font-size="15" font-weight="700" fill="#12243b">Modalities</text><text x="66" y="1124" font-size="13" fill="#53657d">Text · vision · speech/audio · video · embodied</text>
+    <rect x="612" y="1075" width="540" height="62" rx="12" fill="#edf9f5"/><text x="630" y="1102" font-size="15" font-weight="700" fill="#12243b">Capabilities</text><text x="630" y="1124" font-size="13" fill="#53657d">Reasoning · code · RAG · agents · memory · real-time</text>
+    <rect x="48" y="1149" width="540" height="62" rx="12" fill="#f5f1fc"/><text x="66" y="1176" font-size="15" font-weight="700" fill="#12243b">Trust &amp; domains</text><text x="66" y="1198" font-size="13" fill="#53657d">Safety · security · interpretability · privacy · adaptation</text>
+    <rect x="612" y="1149" width="540" height="62" rx="12" fill="#fff4eb"/><text x="630" y="1176" font-size="15" font-weight="700" fill="#12243b">Systems context</text><text x="630" y="1198" font-size="13" fill="#53657d">MoE · cloud/edge · hardware · compression · streaming</text>
+    <rect x="48" y="1233" width="1104" height="45" rx="11" fill="#12243b"/><text x="66" y="1261" font-size="15" fill="#e8f0fa">A role = lifecycle stage × specialization × owned artifact.</text>
     <text x="48" y="1298" font-size="12" fill="#64748b">Conceptual taxonomy · Blank ownership is intentional · October 2026</text>
   </g>
 </svg>
